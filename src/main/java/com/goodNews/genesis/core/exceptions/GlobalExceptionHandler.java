@@ -1,9 +1,11 @@
 package com.goodNews.genesis.core.exceptions;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,6 +21,22 @@ public class GlobalExceptionHandler {
 				HttpStatus.BAD_REQUEST.value(),
 				"Bad Request",
 				ex.getMessage(),
+				LocalDateTime.now());
+
+		return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+	}
+
+	// ========== ERROR DE VALIDACIÓN (400) ==========
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+		String mensajeDetallado = ex.getBindingResult().getFieldErrors().stream()
+				.map(error -> error.getField() + ": " + error.getDefaultMessage())
+				.collect(Collectors.joining(", "));
+
+		ErrorResponse error = new ErrorResponse(
+				HttpStatus.BAD_REQUEST.value(),
+				"Validation Error",
+				mensajeDetallado,
 				LocalDateTime.now());
 
 		return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
@@ -48,6 +66,7 @@ public class GlobalExceptionHandler {
 	}
 
 }
+
 
 
 
