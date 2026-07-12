@@ -15,8 +15,7 @@ public class ValidadorAereo implements ValidadorTransporteStrategy {
 		if (data.empresaTransporte() == null || data.empresaTransporte().isBlank()
 				|| data.nroVuelo() == null || data.nroVuelo().isBlank()
 				|| data.fechaLlegada() == null
-				|| data.fechaIda() == null
-				|| data.boletoUrl() == null || data.boletoUrl().isBlank()) {
+				|| data.fechaIda() == null) {
 			throw new BadRequestException("Todos los datos del vuelo son obligatorios");
 		}
 	}

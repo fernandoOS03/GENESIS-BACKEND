@@ -15,8 +15,7 @@ public class ValidadorBus implements ValidadorTransporteStrategy {
 		if (data.empresaTransporte() == null || data.empresaTransporte().isBlank()
 				|| data.lugarLlegada() == null || data.lugarLlegada().isBlank()
 				|| data.fechaLlegada() == null
-				|| data.fechaIda() == null
-				|| data.boletoUrl() == null || data.boletoUrl().isBlank())
+				|| data.fechaIda() == null)
 			throw new BadRequestException("Todos los datos del viaje son necesarios");
 	}
 
