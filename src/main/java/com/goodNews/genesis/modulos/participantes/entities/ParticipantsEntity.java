@@ -1,17 +1,23 @@
 package com.goodNews.genesis.modulos.participantes.entities;
 
 import com.goodNews.genesis.modulos.viajes.entities.TravelInformationEntity;
+import com.goodNews.genesis.modulos.pagos.entities.AccountPayEntity;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.goodNews.genesis.shared.enums.CargosEnum;
 import com.goodNews.genesis.shared.enums.CondParticipanteEnum;
-import com.goodNews.genesis.shared.enums.EstadosEnum;
+import com.goodNews.genesis.shared.enums.EstadoGeneralEnum;
+import com.goodNews.genesis.shared.enums.EstadoPagoEnum;
+import com.goodNews.genesis.shared.enums.EstadoTransporteEnum;
 import com.goodNews.genesis.shared.enums.GenerosEnum;
 import com.goodNews.genesis.shared.enums.SedesEnum;
 import com.goodNews.genesis.shared.enums.TallaPolosEnum;
+
+import com.goodNews.genesis.modulos.grupos.entities.GrupoEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,6 +28,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -100,11 +108,22 @@ public class ParticipantsEntity {
 	private CargosEnum rol;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "estado_registro", length = 30)
-	private EstadosEnum estadoRegistro;
+	@Column(name = "estado_pago", length = 30)
+	private EstadoPagoEnum estadoPago;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_transporte", length = 30)
+	private EstadoTransporteEnum estadoTransporte;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_general", length = 30)
+	private EstadoGeneralEnum estadoGeneral;
 
 	@Column(name = "fecha_registro")
 	private LocalDateTime fechaRegistro;
+
+	@Column(name = "codigo_viaje", length = 5)
+	private String codigoViaje;
 
 	// Relacion con informacion de viaje
 	@OneToOne(mappedBy = "participante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -113,14 +132,56 @@ public class ParticipantsEntity {
 	@OneToOne(mappedBy = "participante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private AccountPayEntity accountPay;
 
+	// Relacion con el grupo asignado (nullable: null = sin grupo aún)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "grupo_id")
+	private GrupoEntity grupo;
+
 	// Esto asigna la fecha actual al registrar el participante
 	// Ademas se le asigna un estado por defecto en caso no se asigne uno
 	@PrePersist
 	public void onCreate() {
 		this.fechaRegistro = LocalDateTime.now();
-		if (estadoRegistro == null) {
-			this.estadoRegistro = EstadosEnum.PRE_INSCRITO;
+		if (this.codigoViaje == null) {
+			this.codigoViaje = generarCodigoViaje();
 		}
+		if (this.estadoGeneral == null) {
+			this.estadoGeneral = EstadoGeneralEnum.PRE_INSCRITO;
+		}
+		if (this.estadoPago == null) {
+			this.estadoPago = EstadoPagoEnum.PENDIENTE;
+		}
+		if (this.estadoTransporte == null) {
+			if (this.sede != null && this.sede.isLima()) {
+				this.estadoTransporte = EstadoTransporteEnum.NO_APLICA;
+			} else {
+				this.estadoTransporte = EstadoTransporteEnum.PENDIENTE;
+			}
+		}
+		actualizarEstadoGeneral();
+	}
+
+	public void actualizarEstadoGeneral() {
+		if (this.sede == null || this.estadoPago == null || this.estadoTransporte == null) {
+			return;
+		}
+		if (this.sede.isLima() && this.estadoPago == EstadoPagoEnum.COMPLETADO) {
+			this.estadoGeneral = EstadoGeneralEnum.CONFIRMADO;
+		} else if (!this.sede.isLima() && this.estadoPago == EstadoPagoEnum.COMPLETADO && this.estadoTransporte == EstadoTransporteEnum.ASIGNADO) {
+			this.estadoGeneral = EstadoGeneralEnum.CONFIRMADO;
+		} else {
+			this.estadoGeneral = EstadoGeneralEnum.PRE_INSCRITO;
+		}
+	}
+
+	private String generarCodigoViaje() {
+		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		SecureRandom random = new SecureRandom();
+		StringBuilder sb = new StringBuilder(5);
+		for (int i = 0; i < 5; i++) {
+			sb.append(chars.charAt(random.nextInt(chars.length())));
+		}
+		return sb.toString();
 	}
 
 }

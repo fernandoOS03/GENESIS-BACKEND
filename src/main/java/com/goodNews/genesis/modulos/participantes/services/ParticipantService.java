@@ -1,6 +1,6 @@
 package com.goodNews.genesis.modulos.participantes.services;
 
-import java.util.EnumSet;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -9,13 +9,19 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import com.goodNews.genesis.modulos.viajes.dtos.ActualizarViajeDTO;
+import com.goodNews.genesis.modulos.viajes.dtos.VerificarViajeDTO;
+import com.goodNews.genesis.modulos.viajes.dtos.VerificacionResponseDTO;
 import com.goodNews.genesis.modulos.participantes.dtos.ParticipanteAdminDTO;
 import com.goodNews.genesis.modulos.participantes.dtos.ParticipanteRegistroDTO;
 import com.goodNews.genesis.modulos.participantes.dtos.ParticipanteResponseDTO;
+import com.goodNews.genesis.modulos.pagos.entities.AccountPayEntity;
 import com.goodNews.genesis.modulos.participantes.entities.ParticipantsEntity;
 import com.goodNews.genesis.modulos.viajes.entities.TravelInformationEntity;
 import com.goodNews.genesis.shared.enums.CondParticipanteEnum;
-import com.goodNews.genesis.shared.enums.SedesEnum;
+import com.goodNews.genesis.shared.enums.EstadoGeneralEnum;
+import com.goodNews.genesis.shared.enums.EstadoTransporteEnum;
+import com.goodNews.genesis.shared.events.ParticipanteConfirmadoEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import com.goodNews.genesis.core.exceptions.BadRequestException;
 import com.goodNews.genesis.core.exceptions.ResourceNotFoundException;
 import com.goodNews.genesis.core.security.SecurityHelper;
@@ -44,13 +50,10 @@ public class ParticipantService {
 
 	private final TemplateEngine templateEngine;
 
-	private final JwtService jwtService;
 	private final SecurityHelper securityHelper;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
-	// Esto para que si selecciona cualquier sede de lima no pueda acceder al valor
-	// transporte
-	private static final EnumSet<SedesEnum> SEDES_LIMA = EnumSet.of(SedesEnum.LIMA_CENTRO, SedesEnum.VENTANILLA,
-			SedesEnum.VILLA_SALVADOR, SedesEnum.HUAYCAN, SedesEnum.MANCHAY);
+
 
 	// ==========================================================
 	// Admin: Listar todos los participantes
@@ -142,7 +145,7 @@ public class ParticipantService {
 		// boolean esDeLima = "Peru".equalsIgnoreCase(dto.pais()) &&
 		// "Lima".equalsIgnoreCase(dto.sede());
 
-		boolean esDeLima = "PE".equalsIgnoreCase(dto.pais()) && SEDES_LIMA.contains(dto.sede());
+		boolean esDeLima = "PE".equalsIgnoreCase(dto.pais()) && dto.sede() != null && dto.sede().isLima();
 
 		if (esDeLima && dto.tipoTransporte() != null) {
 			throw new BadRequestException("Los participantes de la sede Lima no requieren registro de transporte.");
@@ -152,20 +155,21 @@ public class ParticipantService {
 			throw new BadRequestException("Debe ingresar un rol");
 		}
 
+		AccountPayEntity accountPay = new AccountPayEntity();
+		accountPay.setParticipante(participante);
+		participante.setAccountPay(accountPay);
+
 		participante = participantRepository.save(participante);
 
-		// Generamos un token para el participante
-		String token = jwtService.generateToken(participante.getId().toString());
-
-		// Esta url me servira para completar el registro de los participantes
-		// que no pudieron llenar los datos de su vuelo en el preregistro
-		String urlActualizarRegistro = urlToUpdate + "?token=" + token;
+		// URL fija sin token — el acceso se protege con nroDocumento + codigoViaje
+		String urlActualizarRegistro = urlToUpdate;
 
 		// Se hace esto para enviar a thymeleaf
 		// Diciendolo que se le asigne el valor de la variable de ese nombre y pueda usarse
 		Context contexto = new Context();
 		contexto.setVariable("esDeLima", esDeLima);
 		contexto.setVariable("urlUpdateRegistro", urlActualizarRegistro);
+		contexto.setVariable("codigoViaje", participante.getCodigoViaje());
 		contexto.setVariable("nombreParticipante", participante.getNombres());
 		contexto.setVariable("participante", participante);
 
@@ -215,6 +219,26 @@ public class ParticipantService {
 
 		infoViaje = travelInforParticipantRepository.save(infoViaje);
 
+		EstadoGeneralEnum estadoAnterior = participante.getEstadoGeneral();
+		participante.setEstadoTransporte(EstadoTransporteEnum.ASIGNADO);
+		participante.actualizarEstadoGeneral();
+
+		if (estadoAnterior != EstadoGeneralEnum.CONFIRMADO && 
+			participante.getEstadoGeneral() == EstadoGeneralEnum.CONFIRMADO) {
+			applicationEventPublisher.publishEvent(
+				new ParticipanteConfirmadoEvent(this, participante.getId())
+			);
+		}
+	}
+
+	// ==========================================================
+	// Verificar código de viaje (check-in público)
+	// ==========================================================
+	public VerificacionResponseDTO verificarCodigoViaje(VerificarViajeDTO dto) {
+		ParticipantsEntity participante = participantRepository
+				.findByNroDocumentoAndCodigoViaje(dto.nroDocumento(), dto.codigoViaje().toUpperCase())
+				.orElseThrow(() -> new BadRequestException("Número de documento o código incorrecto"));
+		return new VerificacionResponseDTO(participante.getId(), participante.getNombres());
 	}
 
 	public ActualizarViajeDTO actualizarViajeParticipante(ActualizarViajeDTO dto, UUID id) {
@@ -262,6 +286,18 @@ public class ParticipantService {
 		infoViaje.setLugarLlegada(dto.lugarLlegada());
 
 		TravelInformationEntity datosGuardados = travelInforParticipantRepository.save(infoViaje);
+
+		EstadoGeneralEnum estadoAnterior = participanteExistente.getEstadoGeneral();
+		participanteExistente.setEstadoTransporte(EstadoTransporteEnum.ASIGNADO);
+		participanteExistente.actualizarEstadoGeneral();
+		participantRepository.save(participanteExistente);
+
+		if (estadoAnterior != EstadoGeneralEnum.CONFIRMADO && 
+			participanteExistente.getEstadoGeneral() == EstadoGeneralEnum.CONFIRMADO) {
+			applicationEventPublisher.publishEvent(
+				new ParticipanteConfirmadoEvent(this, participanteExistente.getId())
+			);
+		}
 
 		// Este contexto me sirve para llenar los datos en el envio de correos
 		Context contexto = new Context();
