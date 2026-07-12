@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.goodNews.genesis.modulos.participantes.entities.ParticipantsEntity;
+import com.goodNews.genesis.shared.enums.EstadoGeneralEnum;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<ParticipantsEntity, UUID> {
@@ -20,7 +21,17 @@ public interface ParticipantRepository extends JpaRepository<ParticipantsEntity,
 
     Optional<ParticipantsEntity> findByNombres(String nombres);
 
+    Optional<ParticipantsEntity> findByNroDocumentoAndCodigoViaje(String nroDocumento, String codigoViaje);
+
     List<ParticipantsEntity> findByPaisIgnoreCase(String pais);
+
+    List<ParticipantsEntity> findByEstadoGeneral(EstadoGeneralEnum estadoGeneral);
+
+    List<ParticipantsEntity> findByGrupoIsNull();
+
+    List<ParticipantsEntity> findByGrupoId(UUID grupoId);
 }
+
+
 
 

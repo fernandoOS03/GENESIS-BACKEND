@@ -6,13 +6,17 @@ public record ParticipanteResponseDTO(
         String nombres,
         String apellidos,
         String nmroDocumento,
-        String estadoRegistro) {
+        String estadoPago,
+        String estadoTransporte,
+        String estadoGeneral) {
 	public ParticipanteResponseDTO(ParticipantsEntity entity) {
 		this(
 				entity.getNombres(),          
 	            entity.getApellidos(),        
 	            entity.getNroDocumento(),     
-	            entity.getEstadoRegistro() != null ? entity.getEstadoRegistro().name() : null
+	            entity.getEstadoPago() != null ? entity.getEstadoPago().name() : null,
+	            entity.getEstadoTransporte() != null ? entity.getEstadoTransporte().name() : null,
+	            entity.getEstadoGeneral() != null ? entity.getEstadoGeneral().name() : null
 				);
 				
 	}

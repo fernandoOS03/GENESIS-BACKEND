@@ -39,8 +39,18 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/auth").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/v1/participantes").permitAll()
-						.requestMatchers(HttpMethod.PATCH, "/api/v1/participantes/viaje").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/v1/participantes/viaje/verificar").permitAll()
+						.requestMatchers(HttpMethod.PATCH, "/api/v1/participantes/viaje/*").permitAll()
 						.requestMatchers("/api/usuarios/**").hasAuthority("ROLE_SUPER_ADMIN")
+						.requestMatchers(HttpMethod.POST, "/api/pagos").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_COUNTRY_ADMIN", "ROLE_EDITOR")
+						.requestMatchers("/api/pagos/**").hasAuthority("ROLE_SUPER_ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/tarifas/**").authenticated()
+						.requestMatchers("/api/tarifas/**").hasAuthority("ROLE_SUPER_ADMIN")
+
+						//.requestMatchers("/api/usuarios/**").permitAll()
+						.requestMatchers("/api/v1/tarifas/**").permitAll()
+						.requestMatchers("api/v1/boletos/**").hasAnyAuthority("ROLE_SUPER_ADMIN", "ROLE_COUNTRY_ADMIN", "ROLE_EDITOR")
+
 						.anyRequest().authenticated())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -56,7 +66,7 @@ public class SecurityConfig {
 
 		// Creamos el objeto de confugracion CORS
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://10.0.1.23:5173/3", "http://localhost:5173"));
+		configuration.setAllowedOrigins(List.of("http://192.168.1.176:5173/", "http://localhost:5173", "https://iyf-eventos.netlify.app"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("*"));
 		configuration.setExposedHeaders(List.of("Authorization"));

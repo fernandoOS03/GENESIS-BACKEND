@@ -8,18 +8,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.goodNews.genesis.modulos.viajes.dtos.ActualizarViajeDTO;
+import com.goodNews.genesis.modulos.viajes.dtos.VerificarViajeDTO;
+import com.goodNews.genesis.modulos.viajes.dtos.VerificacionResponseDTO;
 import com.goodNews.genesis.modulos.participantes.dtos.ParticipanteAdminDTO;
 import com.goodNews.genesis.modulos.participantes.dtos.ParticipanteRegistroDTO;
 import com.goodNews.genesis.modulos.participantes.dtos.ParticipanteResponseDTO;
 import com.goodNews.genesis.modulos.participantes.services.ParticipantService;
-import com.goodNews.genesis.shared.services.JwtService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 public class ParticipantController {
 
 	private final ParticipantService service;
-	private final JwtService jwtService;
 
 	// ==========================================================
 	// 1. ENDPOINT : Listar todos los participantes (Admin)
@@ -61,31 +61,22 @@ public class ParticipantController {
 	}
 
 	// ==========================================================
-	// 4. ENDPOINT : Para que el usuario pueda actualizar su viaje
+	// 4. ENDPOINT PÚBLICO: Verificar nroDocumento + código de viaje
 	// ==========================================================
+	@PostMapping("/viaje/verificar")
+	public ResponseEntity<VerificacionResponseDTO> verificarCodigo(
+			@RequestBody @Valid VerificarViajeDTO dto) {
+		return ResponseEntity.ok(service.verificarCodigoViaje(dto));
+	}
 
-	@PatchMapping("/viaje")
-	public ResponseEntity<?> actualizarViaje(
-			@RequestHeader("Authorization") String authHeader,
+	// ==========================================================
+	// 5. ENDPOINT PÚBLICO: El participante actualiza su viaje (usa ID del paso anterior)
+	// ==========================================================
+	@PatchMapping("/viaje/{id}")
+	public ResponseEntity<ActualizarViajeDTO> actualizarViaje(
+			@PathVariable UUID id,
 			@RequestBody @Valid ActualizarViajeDTO dto) {
-
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token de autorización ausente o incorrecto.");
-		}
-
-		String token = authHeader.substring(7);
-
-		if (!jwtService.isTokenValid(token)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body("El enlace de edición ha expirado o es inválido.");
-		}
-
-		String idString = jwtService.extractUsername(token);
-		UUID id = UUID.fromString(idString);
-
-		ActualizarViajeDTO responseDTO = service.actualizarViajeParticipante(dto, id);
-		return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
-
+		return ResponseEntity.ok(service.actualizarViajeParticipante(dto, id));
 	}
 
 }
