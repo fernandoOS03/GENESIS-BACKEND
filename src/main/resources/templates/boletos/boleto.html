@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Boleto World Camp 2027</title>
+    <style type="text/css">
+        * { margin: 0; padding: 0; -fs-box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #ffffff; padding: 20pt; font-size: 10pt; }
+
+        /* ── ANVERSO ── */
+        .ticket-wrapper {
+            width: 100%;
+            height: 180pt; /* Ajustado para proporción 18:6 (~ 3:1) */
+            border-radius: 12pt;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin-bottom: 20pt;
+            border: 1pt solid #e2e8f0;
+            overflow: hidden;
+        }
+        table.layout {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+        }
+        td.col-izquierda {
+            width: 65%;
+            vertical-align: top;
+            padding: 16pt;
+        }
+
+        td.col-derecha {
+            width: 35%;
+            vertical-align: middle;
+            text-align: center;
+            padding: 16pt;
+        }
+        .qr-box {
+            background: #ffffff;
+            padding: 6pt;
+            display: inline-block;
+            -fs-border-radius: 6pt; /* Pequeño border radius */
+            border-radius: 6pt;
+            margin-bottom: 8pt;
+            border: 1pt solid transparent;
+        }
+        .qr-box img {
+            width: 125pt; /* QR un poco más grande */
+            height: 125pt;
+            display: block;
+        }
+        .p-nombre {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 8pt;
+            letter-spacing: 0.5pt;
+        }
+        .hr-line {
+            height: 1pt;
+            background-color: rgba(255, 255, 255, 0.6);
+            margin: 0 auto 8pt auto;
+            width: 80%;
+        }
+        .p-id {
+            background-color: #ffffff;
+            color: #1a237e;
+            font-size: 9pt;
+            font-weight: bold;
+            display: inline-block;
+            padding: 4pt 12pt;
+            -fs-border-radius: 12pt;
+        }
+
+        /* ── REVERSO (TÉRMINOS Y CONDICIONES) ── */
+        .tc-container {
+            width: 100%;
+            margin-top: 10pt;
+        }
+        .tc-titulo {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5pt;
+            margin-bottom: 8pt;
+        }
+        .tc-box {
+            border: 1pt solid #dee2e6;
+            background-color: #f8f9fa;
+            padding: 14pt 18pt;
+        }
+        table.tc-item {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6pt;
+        }
+        td.tc-dot {
+            width: 10pt;
+            vertical-align: top;
+            font-size: 8pt;
+            color: #6c757d;
+            padding-top: 1pt;
+        }
+        td.tc-text {
+            font-size: 7.5pt;
+            color: #6c757d;
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ═════════════════════════════════════
+         ANVERSO
+         ═════════════════════════════════════ -->
+    <div class="ticket-wrapper" th:style="|background-image: url('data:image/png;base64,${fondoWcBase64}');|">
+        <table class="layout">
+            <tr>
+                <!-- Columna izquierda: Vacía (El fondo ya cubre toda la tarjeta) -->
+                <td class="col-izquierda">
+                    <!-- Espacio reservado para el fondo de la imagen -->
+                </td>
+
+                <!-- Columna derecha: QR + datos participante (Fondo transparente para ver gradiente) -->
+                <td class="col-derecha">
+                    <div class="qr-box">
+                        <img th:src="|data:image/png;base64,${qrBase64}|" alt="QR" width="125" height="125"/>
+                    </div>
+
+                    <div class="p-nombre"
+                         th:text="${dto.apellidos.toUpperCase() + ', ' + dto.nombres.toUpperCase()}">
+                        APELLIDOS, NOMBRES
+                    </div>
+
+                    <div class="hr-line"></div>
+
+                    <div class="p-id" th:text="|ID: ${dto.nroDocumento}|">
+                        ID: 00000000
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ═════════════════════════════════════
+         REVERSO — Terminos y Condiciones
+         ═════════════════════════════════════ -->
+    <div class="tc-container">
+        <div class="tc-titulo">Términos y Condiciones</div>
+        
+        <div class="tc-box">
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">El titular del boleto deberá presentarlo al ingresar al evento, ya sea en formato digital o impreso.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">El código QR es de uso personal e intransferible. Está prohibido compartir, vender o ceder este boleto a terceros.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">La organización se reserva el derecho de verificar la identidad del portador mediante documento oficial.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">En caso de cancelación del evento por causas de fuerza mayor, la organización comunicará oportunamente las medidas a tomar.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">Queda prohibido el ingreso de alimentos, bebidas, objetos peligrosos o cualquier elemento no autorizado por la organización.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">Los organizadores se reservan el derecho de admisión y permanencia dentro del recinto.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">Este documento no tiene valor monetario y no puede canjearse por dinero.</td></tr></table>
+            <table class="tc-item"><tr><td class="tc-dot">&#8226;</td><td class="tc-text">Al ingresar al evento, el participante acepta las condiciones de seguridad y convivencia establecidas por la organización.</td></tr></table>
+        </div>
+    </div>
+
+</body>
+</html>

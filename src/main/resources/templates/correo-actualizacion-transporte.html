@@ -7,138 +7,209 @@
     <title>Actualización de Transporte - Génesis</title>
 </head>
 
-<body
-    style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f5; -webkit-font-smoothing: antialiased; width: 100%; height: 100%;">
-    <!-- Main Wrapper -->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"
-        style="background-color: #f4f4f5; ">
-        <tr>
-            <td align="center">
-                <!-- Container -->
-                <table border="0" cellpadding="0" cellspacing="0" width="100%"
-                    style="max-width: full; background-color: #ffffff; overflow: hidden; ">
+<body style="
+    margin:0;
+    padding:0;
+    background:#f5f5f5;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+">
 
-                    <!-- Header -->
-                    <tr>
-                        <td style="background-color: #09090b; padding: 48px 40px; text-align: center;">
-                            <div
-                                style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;">
-                                INTERNANTIONAL YOUTH FELLOWSHIP
-                            </div>
-                            <h1
-                                style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2;">
-                                ¡Transporte Registrado!
-                            </h1>
-                        </td>
-                    </tr>
+<table width="100%%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td align="center" style="padding:48px 24px;">
 
-                    <!-- Body -->
-                    <tr>
-                        <td style="padding: 40px; color: #3f3f46; line-height: 1.6;">
-                            <p style="font-size: 16px; margin-top: 0; margin-bottom: 24px; color: #18181b;">
-                                Hola, <strong style="font-weight: 700;"
-                                    th:text="${nombreParticipante}">Participante</strong>.
-                            </p>
-                            <p style="font-size: 16px; margin-top: 0; margin-bottom: 32px;">
-                                Hemos recibido correctamente los detalles de tu transporte para el evento. A
-                                continuación, el resumen de tu itinerario:
-                            </p>
+            <table width="620" cellpadding="0" cellspacing="0" border="0" style="
+    background:#ffffff;
+">
 
-                            <!-- Data Summary Box -->
-                            <div
-                                style="background-color: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 24px; margin-bottom: 32px;">
-                                <h2
-                                    style="font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 0; margin-bottom: 20px; color: #71717a; border-bottom: 1px solid #e4e4e7; padding-bottom: 12px; font-weight: 600;">
-                                    Resumen de Itinerario
-                                </h2>
+                <!-- Logo/Branding -->
+                <tr>
+                    <td align="center" style="padding:48px 48px 0;">
+                        <p style="
+                margin:0;
+                font-size:12px;
+                font-weight:700;
+                color:#9ca3af;
+                letter-spacing:2px;
+                text-transform:uppercase;
+            ">
+                            Génesis
+                        </p>
+                    </td>
+                </tr>
 
-                                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 14px;">
-                                    <tr>
-                                        <td colspan="2"
-                                            style="padding: 12px 0 8px 0; color: #18181b; font-weight: 700; font-size: 15px;">
-                                            Trayecto de Ida
-                                            Detalles del Transporte
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #71717a;"
-                                            width="45%">Medio de transporte</td>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #18181b; font-weight: 600;"
-                                            align="right"
-                                            th:text="${dataSave.tipoTransporte != null ? dataSave.tipoTransporte : 'N/A'}">
-                                            Aéreo / Terrestre</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #71717a;">
-                                            Empresa / Aerolínea</td>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #18181b; font-weight: 600;"
-                                            align="right"
-                                            th:text="${dataSave.empresaTransporte != null ? dataSave.empresaTransporte : 'N/A'}">
-                                            Nombre Empresa</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #71717a;">
-                                            Lugar de llegada</td>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #18181b; font-weight: 600;"
-                                            align="right"
-                                            th:text="${dataSave.lugarLlegada != null ? dataSave.lugarLlegada : 'N/A'}">
-                                            Destino</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #71717a;">
-                                            Número de vuelo / Bus</td>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #18181b; font-weight: 600;"
-                                            align="right"
-                                            th:text="${dataSave.nroVuelo != null ? dataSave.nroVuelo : 'N/A'}">Nro</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #71717a;">
-                                            Fecha de llegada</td>
-                                        <td style="padding: 8px 0; border-bottom: 1px solid #f4f4f5; color: #18181b; font-weight: 600;"
-                                            align="right"
-                                            th:text="${dataSave.fechaLlegada != null ? dataSave.fechaLlegada : 'N/A'}">
-                                            DD/MM/YYYY hh:mm a</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; color: #71717a;">
-                                            Fecha de salida</td>
-                                        <td style="padding: 8px 0; color: #18181b; font-weight: 600;" align="right"
-                                            th:text="${dataSave.fechaIda != null ? dataSave.fechaIda : 'N/A'}">
-                                            DD/MM/YYYY hh:mm a</td>
-                                    </tr>
-                                </table>
-                            </div>
+                <!-- Saludo -->
+                <tr>
+                    <td align="center" style="padding:48px 56px 0;">
+                        <p style="
+                margin:0;
+                font-size:18px;
+                color:#6b7280;
+                font-weight:400;
+            ">
+                            Hola, <strong style="color:#111827;" th:text="${nombreParticipante}">Participante</strong>
+                        </p>
+                    </td>
+                </tr>
 
-                            <p style="font-size: 15px; margin-bottom: 24px; color: #52525b; line-height: 1.6;">
-                                Si notas que hay algún error en tu itinerario de viaje, por favor contáctanos lo más
-                                pronto posible para actualizar tu información en nuestro sistema.
-                            </p>
+                <!-- Título principal -->
+                <tr>
+                    <td align="center" style="padding:24px 56px 0;">
+                        <h1 style="
+                margin:0;
+                font-family:Georgia,'Times New Roman',serif;
+                font-size:56px;
+                line-height:1.15;
+                font-weight:500;
+                color:#111827;
+                letter-spacing:-1.5px;
+            ">
+                            ¡Transporte<br>
+                            Registrado!
+                        </h1>
+                    </td>
+                </tr>
 
-                            <p
-                                style="margin-top: 48px; font-size: 18px; text-align: center; font-weight: 700; color: #18181b; letter-spacing: -0.5px;">
-                                ¡Nos vemos pronto en el evento!
-                            </p>
-                        </td>
-                    </tr>
+                <!-- Descripción -->
+                <tr>
+                    <td align="center" style="padding:32px 80px 0;">
+                        <p style="
+                margin:0;
+                font-size:18px;
+                line-height:1.9;
+                color:#6b7280;
+                font-weight:400;
+            ">
+                            Hemos recibido los detalles de tu transporte.
+                            Aquí está el resumen de tu itinerario.
+                        </p>
+                    </td>
+                </tr>
 
-                    <!-- Footer -->
-                    <tr>
-                        <td
-                            style="background-color: #fafafa; padding: 32px 40px; text-align: center; border-top: 1px solid #e4e4e7;">
-                            <p style="margin: 0 0 12px 0; color: #a1a1aa; font-size: 13px; line-height: 1.5;">
-                                Este es un correo electrónico generado automáticamente por nuestro sistema, por favor no
-                                lo respondas.
-                            </p>
-                            <p
-                                style="margin: 0; color: #71717a; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;">
-                                &copy; 2026 GÉNESIS
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+                <!-- Tarjeta de Itinerario -->
+                <tr>
+                    <td style="padding:56px;">
+                        <table width="100%%" cellpadding="0" cellspacing="0" border="0"
+                               style="
+                background:#f7f7f7;
+                border-radius:24px;
+            ">
+                            <tr>
+                                <td style="padding:48px;">
+                                    <p style="
+                            margin:0;
+                            font-size:12px;
+                            text-transform:uppercase;
+                            letter-spacing:2px;
+                            color:#9ca3af;
+                            font-weight:600;
+                            margin-bottom:24px;
+                        ">
+                                        Resumen de viaje
+                                    </p>
+
+                                    <!-- Data Table -->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%%" style="font-size:15px;">
+                                        <tr>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#6b7280;">Medio de transporte</td>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#111827; font-weight:600; text-align:right;"
+                                                th:text="${dataSave.tipoTransporte != null ? dataSave.tipoTransporte : 'N/A'}">
+                                                Aéreo / Terrestre</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#6b7280;">Empresa / Aerolínea</td>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#111827; font-weight:600; text-align:right;"
+                                                th:text="${dataSave.empresaTransporte != null ? dataSave.empresaTransporte : 'N/A'}">
+                                                Nombre Empresa</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#6b7280;">Número de vuelo / Bus</td>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#111827; font-weight:600; text-align:right;"
+                                                th:text="${dataSave.nroVuelo != null ? dataSave.nroVuelo : 'N/A'}">
+                                                Nro</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#6b7280;">Lugar de llegada</td>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#111827; font-weight:600; text-align:right;"
+                                                th:text="${dataSave.lugarLlegada != null ? dataSave.lugarLlegada : 'N/A'}">
+                                                Destino</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#6b7280;">Fecha de llegada</td>
+                                            <td style="padding:12px 0; border-bottom:1px solid #e5e7eb; color:#111827; font-weight:600; text-align:right;"
+                                                th:text="${dataSave.fechaLlegada != null ? dataSave.fechaLlegada : 'N/A'}">
+                                                DD/MM/YYYY hh:mm a</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:12px 0; color:#6b7280;">Fecha de salida</td>
+                                            <td style="padding:12px 0; color:#111827; font-weight:600; text-align:right;"
+                                                th:text="${dataSave.fechaIda != null ? dataSave.fechaIda : 'N/A'}">
+                                                DD/MM/YYYY hh:mm a</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Nota de contacto -->
+                <tr>
+                    <td align="center" style="padding:0 80px 56px;">
+                        <p style="
+                margin:0;
+                font-size:15px;
+                color:#6b7280;
+                line-height:1.8;
+            ">
+                            Si hay algún error en tu itinerario,<br>
+                            contáctanos lo más pronto posible para actualizarlo.
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Cierre -->
+                <tr>
+                    <td align="center" style="padding:0 56px 56px;">
+                        <p style="
+                margin:0;
+                font-size:18px;
+                color:#111827;
+                font-weight:600;
+                letter-spacing:-0.5px;
+            ">
+                            ¡Nos vemos pronto en el evento!
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td align="center" style="padding:32px 56px 56px;">
+                        <p style="
+                margin:0 0 8px;
+                font-size:14px;
+                color:#9ca3af;
+                letter-spacing:.3px;
+            ">
+                            Génesis
+                        </p>
+
+                        <p style="
+                margin:0;
+                font-size:13px;
+                color:#c0c4cc;
+            ">
+                            Este correo fue generado automáticamente. Por favor no lo respondas.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
 </body>
-
 </html>
